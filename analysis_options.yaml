@@ -1,0 +1,13 @@
+include: package:lint/strict.yaml
+
+# Additional information about this file can be found at
+# https://dart.dev/guides/language/analysis-options
+
+analyzer:
+  exclude:
+    - '**.g.dart'
+
+linter:
+  rules:
+    prefer_single_quotes: true
+    file_names: false
