@@ -25,12 +25,13 @@ const String sharedPreferenceLocaleKey = 'locale';
 /// `SharedPreferences` is used to persist and retrieve the `Locale`
 ///
 /// Currently supports:
-/// * English (UK)
-/// * English (USA)
+/// * English (UK - traditional)
+/// * English (USA - simplified)
 /// * French
 /// * German
 /// * Spanish
 /// * Italian
+/// * Japanese
 ///
 /// TODO:
 /// * Make language selection configurable (based on supported locales??)
@@ -50,10 +51,11 @@ class _LanguageSelectedState extends State<LanguageSelector> {
   final Map<String, String> _iconAssets = {
     'en-GB': 'assets/flags/gb.svg',
     'en-US': 'assets/flags/us.svg',
-    'fr-FR': 'assets/flags/fr.svg',
     'de-DE': 'assets/flags/de.svg',
     'es-ES': 'assets/flags/es.svg',
+    'fr-FR': 'assets/flags/fr.svg',
     'it-IT': 'assets/flags/it.svg',
+    'ja-JP': 'assets/flags/jp.svg',
   };
 
   Widget _renderLanguages(
@@ -82,12 +84,14 @@ class _LanguageSelectedState extends State<LanguageSelector> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),
-                child: SvgPicture.asset(
-                  _iconAssets[l.toLanguageTag()]!,
-                  width: 70,
-                  // height: 40,
-                  package: 'language_selector',
-                ),
+                child: _iconAssets[l.toLanguageTag()] != null
+                    ? SvgPicture.asset(
+                        _iconAssets[l.toLanguageTag()]!,
+                        width: 70,
+                        // height: 40,
+                        package: 'language_selector',
+                      )
+                    : const SizedBox.shrink(),
               ),
             ],
           ),
@@ -100,7 +104,7 @@ class _LanguageSelectedState extends State<LanguageSelector> {
     String s,
     _SupportedLocales supportedLocales,
   ) async {
-    final SharedPreferences sp = await SharedPreferences.getInstance();
+    final sp = await SharedPreferences.getInstance();
     sp.setString(sharedPreferenceLocaleKey, s);
 
     setState(() {
@@ -122,7 +126,7 @@ class _LanguageSelectedState extends State<LanguageSelector> {
       debugPrint('ERROR: Locale lookup from shared preferences: $e');
     }
 
-    final localeParts = localeString.split('-');
+    final localeParts = localeString.split(RegExp('-|_'));
 
     final selected = widget.resolver.resolution()(
       Locale(localeParts.first, localeParts.last),
@@ -180,7 +184,7 @@ class _LanguageSelectedState extends State<LanguageSelector> {
 }
 
 class _SupportedLocales {
-  final Locale? selected;
+  final Locale selected;
   final List<Locale> supported;
   const _SupportedLocales(this.selected, this.supported);
 }

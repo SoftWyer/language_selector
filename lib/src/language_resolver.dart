@@ -6,7 +6,7 @@ abstract class LanguageResolver {
   const LanguageResolver();
 
   /// Resolve the `Locale`
-  Locale? Function(Locale?, Iterable<Locale>) resolution({Locale? fallback});
+  Locale Function(Locale?, Iterable<Locale>) resolution({Locale? fallback});
 
   /// A callback when the user has selected a Locale
   void onLocaleChanged(Locale? locale);
